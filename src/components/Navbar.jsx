@@ -84,7 +84,7 @@ const Navbar = () => {
                                     className="rounded-lg"
                                 />
                                 <p className="font-bold text-lg tracking-wide text-white">
-                                    Startup<span className="text-primary">Forge</span>
+                                    Startup<span className="text-primary text-indigo-400">Forge</span>
                                 </p>
                             </div>
                         </Link>

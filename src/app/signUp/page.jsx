@@ -7,8 +7,6 @@ import {
     Input,
     Label,
     Surface,
-    ListBox,
-    Select,
     TextField,
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
@@ -25,7 +23,8 @@ export default function SignUpPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
 
-    // পিসি থেকে ফাইল নিয়ে ImgBB তে আপলোড করার ফাংশন
+    const [selectedRole, setSelectedRole] = useState("founder");
+
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -56,14 +55,14 @@ export default function SignUpPage() {
         }
     };
 
-    // গুগল দিয়ে সাইন-ইন/সাইন-আপ করার ফাংশন
+    // গুগল সাইনআপ (এখন সরাসরি কাজ করবে এবং ব্যাকএন্ড থেকে ডিফল্ট রোল পেয়ে যাবে)
     const handleGoogleSignup = async () => {
         setGoogleLoading(true);
         setErrorMsg("");
         try {
             await authClient.signIn.social({
                 provider: "google",
-                callbackURL: "/", // সফলভাবে লগইন হওয়ার পর কোথায় যাবে
+                callbackURL: "/",
             });
         } catch (err) {
             setErrorMsg("Google signup failed. Please try again.");
@@ -77,10 +76,9 @@ export default function SignUpPage() {
         const formData = new FormData(e.currentTarget);
         const user = Object.fromEntries(formData.entries());
 
-        // ফর্ম ডাটার সাথে ImgBB থেকে পাওয়া ইমেজ লিংকটি যুক্ত করা হলো
         user.image = imageUrl;
+        user.role = selectedRole;
 
-        // পাসওয়ার্ড ভ্যালিডেশন চেক (কমপক্ষে ৮ ক্যারেক্টার, ১টি বড় ও ১টি ছোট হাতের অক্ষর)
         const password = user.password;
         const hasUppercase = /[A-Z]/.test(password);
         const hasLowercase = /[a-z]/.test(password);
@@ -104,7 +102,6 @@ export default function SignUpPage() {
         <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-black text-white">
             <div className="w-full max-w-xl bg-zinc-950 border border-zinc-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
 
-                {/* হেডার সেকশন */}
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 mb-4">
                         <Rocket className="w-6 h-6" />
@@ -118,6 +115,19 @@ export default function SignUpPage() {
                         {errorMsg}
                     </div>
                 )}
+
+                {/* রোল সিলেক্ট অপশন (বাধ্যতামূলক নয়) */}
+                <div className="mb-6 space-y-1.5">
+                    <label className="text-sm font-medium text-zinc-300 block">I want to join as a</label>
+                    <select
+                        value={selectedRole}
+                        onChange={(e) => setSelectedRole(e.target.value)}
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                    >
+                        <option value="founder">Founder (Post startups & hire)</option>
+                        <option value="collaborator">Collaborator (Find & join teams)</option>
+                    </select>
+                </div>
 
                 {/* Google Signup Button */}
                 <button
@@ -141,7 +151,6 @@ export default function SignUpPage() {
                     )}
                 </button>
 
-                {/* Divider */}
                 <div className="relative flex items-center justify-center mb-6">
                     <div className="border-t border-zinc-800 w-full"></div>
                     <span className="absolute bg-zinc-950 px-3 text-xs text-zinc-500 uppercase tracking-wider">Or with email</span>
@@ -150,9 +159,7 @@ export default function SignUpPage() {
                 <Surface className="w-full bg-transparent">
                     <Form onSubmit={onSubmit} className="space-y-5">
                         <Fieldset className="w-full space-y-4">
-
                             <Fieldset.Group className="space-y-4">
-                                {/* Name */}
                                 <TextField isRequired name="name" className="space-y-1.5">
                                     <Label className="text-sm font-medium text-zinc-300">Full Name</Label>
                                     <Input
@@ -163,7 +170,6 @@ export default function SignUpPage() {
                                     <FieldError />
                                 </TextField>
 
-                                {/* PC থেকে ইমেজ আপলোড ফিল্ড */}
                                 <div className="space-y-1.5">
                                     <label className="text-sm font-medium text-zinc-300 block">Profile Picture (Upload from PC)</label>
                                     <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-zinc-800 border-dashed rounded-xl cursor-pointer bg-zinc-900 hover:bg-zinc-850 transition-all">
@@ -190,7 +196,6 @@ export default function SignUpPage() {
                                     </label>
                                 </div>
 
-                                {/* Email */}
                                 <TextField isRequired name="email" type="email" className="space-y-1.5">
                                     <Label className="text-sm font-medium text-zinc-300">Email Address</Label>
                                     <Input
@@ -201,7 +206,6 @@ export default function SignUpPage() {
                                     <FieldError />
                                 </TextField>
 
-                                {/* Password with Eye Icon */}
                                 <TextField isRequired name="password" className="space-y-1.5">
                                     <Label className="text-sm font-medium text-zinc-300">Password</Label>
                                     <div className="relative">
@@ -221,31 +225,8 @@ export default function SignUpPage() {
                                     </div>
                                     <FieldError />
                                 </TextField>
-
-                                {/* Role Selection */}
-                                <Select isRequired name="role" placeholder="Select your role" className="space-y-1.5">
-                                    <Label className="text-sm font-medium text-zinc-300">Signup As</Label>
-                                    <Select.Trigger className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white flex justify-between items-center focus:outline-none focus:border-indigo-500">
-                                        <Select.Value />
-                                        <Select.Indicator />
-                                    </Select.Trigger>
-                                    <Select.Popover className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl mt-1 overflow-hidden">
-                                        <ListBox className="p-1">
-                                            <ListBox.Item id="founder" textValue="Founder" className="px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg cursor-pointer">
-                                                Founder (Post startups & hire)
-                                                <ListBox.ItemIndicator />
-                                            </ListBox.Item>
-                                            <ListBox.Item id="collaborator" textValue="Collaborator" className="px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg cursor-pointer">
-                                                Collaborator (Find & join teams)
-                                                <ListBox.ItemIndicator />
-                                            </ListBox.Item>
-                                        </ListBox>
-                                    </Select.Popover>
-                                </Select>
-
                             </Fieldset.Group>
 
-                            {/* Submit Button */}
                             <Button type="submit" className="w-full mt-6 bg-white text-black hover:bg-zinc-200 font-semibold py-3 rounded-xl transition-all shadow-lg">
                                 Create Account
                             </Button>
@@ -253,7 +234,6 @@ export default function SignUpPage() {
                     </Form>
                 </Surface>
 
-                {/* Footer Link */}
                 <div className="text-center mt-6 text-sm text-zinc-400">
                     Already have an account?{" "}
                     <Link href="/signin" className="text-indigo-400 hover:underline font-medium">
