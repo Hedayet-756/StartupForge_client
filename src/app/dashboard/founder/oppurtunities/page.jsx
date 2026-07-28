@@ -1,22 +1,22 @@
 
-import { getCompanyJobs } from '@/lib/api/jobs';
 import React from 'react';
 // 🎯 আইকন লাইব্রেরিতে প্রয়োজনীয় আইকনগুলো যুক্ত করা হয়েছে
 import { Briefcase, Calendar, Pin, ArrowUpRight, Globe, Eye, Pencil, TrashBin, CheckList } from '@gravity-ui/icons';
 import { getloggedInFounderStartup } from '@/lib/api/founders';
+import { getFounderOpportunities } from '@/lib/api/opportunities';
 // Next.js-এর সার্ভার সাইড ক্যাশ বন্ধ রাখার জন্য
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const FounderOpportunities = async () => {
-    const companyData = await getloggedInFounderStartup();
-    const startup = (Array.isArray(companyData) && companyData.length > 0) ? companyData[0] : companyData;
+    const startunData = await getloggedInFounderStartup();
+    const startup = (Array.isArray(startunData) && startunData.length > 0) ? startunData[0] : startunData;
     const startupId = startup?._id || startup?.id;
 
     let opportunities = [];
     if (startupId) {
         try {
-            const rawJobs = await getCompanyJobs(startupId);
+            const rawJobs = await getFounderOpportunities(startupId);
             opportunities = Array.isArray(rawJobs) ? rawJobs : [];
         } catch (error) {
             console.error("Fetch error:", error);
@@ -24,7 +24,7 @@ const FounderOpportunities = async () => {
     }
 
     console.log("=========================================");
-    console.log("🏢 [RecruiterJobs] Current Company ID:", startupId);
+    console.log("🏢 [RecruiterJobs] Current startup ID:", startupId);
     console.log("📦 [RecruiterJobs] Real-time Opportunities Found:", opportunities.length);
     console.log("=========================================");
 
