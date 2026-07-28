@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
     Button,
     FieldError,
@@ -12,7 +12,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import Link from "next/link";
-import { Rocket, Upload, Loader2, Eye, EyeOff } from "lucide-react";
+import { Rocket, Upload, Loader2, Eye, EyeOff, User, Briefcase } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
 export default function SignUpPage() {
@@ -26,7 +26,8 @@ export default function SignUpPage() {
     const searchParams = useSearchParams();
     const redirectTo = searchParams.get('redirect') || '/';
 
-    const [selectedRole, setSelectedRole] = useState("founder");
+    // ডিফল্টভাবে collaborator সিলেক্ট করা থাকবে
+    const [selectedRole, setSelectedRole] = useState("collaborator");
 
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
@@ -58,7 +59,7 @@ export default function SignUpPage() {
         }
     };
 
-    // গুগল সাইনআপ (এখন সরাসরি কাজ করবে এবং ব্যাকএন্ড থেকে ডিফল্ট রোল পেয়ে যাবে)
+    // গুগল সাইনআপ
     const handleGoogleSignup = async () => {
         setGoogleLoading(true);
         setErrorMsg("");
@@ -91,9 +92,13 @@ export default function SignUpPage() {
             return;
         }
 
+        // সিলেক্টেড রোল অনুযায়ী প্ল্যান নির্ধারণ
+        const plan = selectedRole === 'collaborator' ? 'collaborator_free' : 'founder_free';
+
         try {
             await authClient.signUp.email({
                 ...user,
+                plan,
             });
             router.push(redirectTo);
         } catch (err) {
@@ -118,19 +123,6 @@ export default function SignUpPage() {
                         {errorMsg}
                     </div>
                 )}
-
-                {/* রোল সিলেক্ট অপশন (বাধ্যতামূলক নয়) */}
-                <div className="mb-6 space-y-1.5">
-                    <label className="text-sm font-medium text-zinc-300 block">I want to join as a</label>
-                    <select
-                        value={selectedRole}
-                        onChange={(e) => setSelectedRole(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
-                    >
-                        <option value="founder">Founder (Post startups & hire)</option>
-                        <option value="collaborator">Collaborator (Find & join teams)</option>
-                    </select>
-                </div>
 
                 {/* Google Signup Button */}
                 <button
@@ -163,6 +155,41 @@ export default function SignUpPage() {
                     <Form onSubmit={onSubmit} className="space-y-5">
                         <Fieldset className="w-full space-y-4">
                             <Fieldset.Group className="space-y-4">
+
+                                {/* রেডিও স্টাইলে রোল সিলেকশন অপশন (কোলাবোরেট প্রথমে এবং ডিফল্ট সিলেক্টেড) */}
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-zinc-300 block">I want to join as</label>
+                                    <div className="grid grid-cols-2 gap-3">
+
+                                        {/* Collaborator Card (First) */}
+                                        <div
+                                            onClick={() => setSelectedRole("collaborator")}
+                                            className={`flex flex-col p-3 rounded-xl border cursor-pointer transition-all ${selectedRole === "collaborator" ? "bg-indigo-600/10 border-indigo-500 text-white" : "bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700"}`}
+                                        >
+                                            <div className="flex items-center justify-between mb-1">
+                                                <User className={`w-4 h-4 ${selectedRole === "collaborator" ? "text-indigo-400" : "text-zinc-500"}`} />
+                                                <input type="radio" name="roleChoice" checked={selectedRole === "collaborator"} onChange={() => setSelectedRole("collaborator")} className="accent-indigo-500" />
+                                            </div>
+                                            <span className="font-semibold text-xs text-zinc-200">Collaborator</span>
+                                            <span className="text-[10px] text-zinc-500">Find & join teams</span>
+                                        </div>
+
+                                        {/* Founder Card (Second) */}
+                                        <div
+                                            onClick={() => setSelectedRole("founder")}
+                                            className={`flex flex-col p-3 rounded-xl border cursor-pointer transition-all ${selectedRole === "founder" ? "bg-indigo-600/10 border-indigo-500 text-white" : "bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700"}`}
+                                        >
+                                            <div className="flex items-center justify-between mb-1">
+                                                <Briefcase className={`w-4 h-4 ${selectedRole === "founder" ? "text-indigo-400" : "text-zinc-500"}`} />
+                                                <input type="radio" name="roleChoice" checked={selectedRole === "founder"} onChange={() => setSelectedRole("founder")} className="accent-indigo-500" />
+                                            </div>
+                                            <span className="font-semibold text-xs text-zinc-200">Founder</span>
+                                            <span className="text-[10px] text-zinc-500">Post startups & hire</span>
+                                        </div>
+
+                                    </div>
+                                </div>
+
                                 <TextField isRequired name="name" className="space-y-1.5">
                                     <Label className="text-sm font-medium text-zinc-300">Full Name</Label>
                                     <Input
@@ -173,30 +200,45 @@ export default function SignUpPage() {
                                     <FieldError />
                                 </TextField>
 
+                                {/* ইমেজ আপলোড দুই ভাগ করা এবং প্রিভিউ দেখানোর ব্যবস্থা */}
                                 <div className="space-y-1.5">
-                                    <label className="text-sm font-medium text-zinc-300 block">Profile Picture (Upload from PC)</label>
-                                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-zinc-800 border-dashed rounded-xl cursor-pointer bg-zinc-900 hover:bg-zinc-850 transition-all">
-                                        <div className="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
-                                            {uploading ? (
-                                                <>
-                                                    <Loader2 className="w-6 h-6 text-indigo-400 animate-spin mb-2" />
-                                                    <p className="text-xs text-zinc-400">Uploading to ImgBB...</p>
-                                                </>
-                                            ) : imageUrl ? (
-                                                <>
-                                                    <p className="text-xs text-emerald-400 font-medium">Image Uploaded Successfully! ✅</p>
-                                                    <p className="text-[10px] text-zinc-500 mt-1 truncate max-w-[250px]">{imageUrl}</p>
-                                                </>
+                                    <label className="text-sm font-medium text-zinc-300 block">Profile Picture</label>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
+
+                                        {/* বামপাশে প্রিভিউ বক্স */}
+                                        <div className="flex items-center justify-center w-full h-28 bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden relative">
+                                            {imageUrl ? (
+                                                <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
                                             ) : (
-                                                <>
-                                                    <Upload className="w-6 h-6 text-zinc-400 mb-2" />
-                                                    <p className="text-xs text-zinc-400"><span className="font-semibold text-zinc-200">Click to upload</span> or drag and drop</p>
-                                                    <p className="text-[10px] text-zinc-500 mt-1">PNG, JPG, WEBP (Max 5MB)</p>
-                                                </>
+                                                <div className="flex flex-col items-center text-zinc-600">
+                                                    <User className="w-8 h-8 mb-1" />
+                                                    <span className="text-[10px]">No Image</span>
+                                                </div>
                                             )}
                                         </div>
-                                        <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                                    </label>
+
+                                        {/* ডানপাশে আপলোড ড্র্যাগ অ্যান্ড ড্রপ বক্স */}
+                                        <div className="sm:col-span-2">
+                                            <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-zinc-800 border-dashed rounded-xl cursor-pointer bg-zinc-900 hover:bg-zinc-850 transition-all">
+                                                <div className="flex flex-col items-center justify-center px-4 text-center">
+                                                    {uploading ? (
+                                                        <>
+                                                            <Loader2 className="w-5 h-5 text-indigo-400 animate-spin mb-1" />
+                                                            <p className="text-xs text-zinc-400">Uploading...</p>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Upload className="w-5 h-5 text-zinc-400 mb-1" />
+                                                            <p className="text-xs text-zinc-400"><span className="font-semibold text-zinc-200">Click to upload</span></p>
+                                                            <p className="text-[10px] text-zinc-500 mt-0.5">PNG, JPG, WEBP (Max 5MB)</p>
+                                                        </>
+                                                    )}
+                                                </div>
+                                                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                                            </label>
+                                        </div>
+
+                                    </div>
                                 </div>
 
                                 <TextField isRequired name="email" type="email" className="space-y-1.5">
@@ -230,7 +272,7 @@ export default function SignUpPage() {
                                 </TextField>
                             </Fieldset.Group>
 
-                            <Button type="submit" className="w-full mt-6 bg-white text-black hover:bg-zinc-200 font-semibold py-3 rounded-xl transition-all shadow-lg">
+                            <Button type="submit" className="w-full mt-6 bg-white text-black hover:bg-zinc-200 font-semibold py-3 rounded-xl transition-all shadow-lg cursor-pointer">
                                 Create Account
                             </Button>
                         </Fieldset>

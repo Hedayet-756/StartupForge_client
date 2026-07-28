@@ -22,6 +22,12 @@ export const auth = betterAuth({
                 required: false,
                 defaultValue: "collaborator",
                 input: true
+            },
+            plan: {
+                type: "string",
+                required: false,
+                defaultValue: "collaborator_free",
+                input: true
             }
         }
     },
