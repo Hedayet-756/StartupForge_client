@@ -1,7 +1,8 @@
 import React from 'react';
 import StartupProfile from './StartupProfile';
 import { getUserSession } from '@/lib/core/session';
-import { getRecruiterCompany } from '@/lib/api/companies';
+import { getFounderStartup } from '@/lib/api/founders';
+
 
 const StartupPage = async () => {
     const sessionData = await getUserSession();
@@ -12,7 +13,7 @@ const StartupPage = async () => {
 
     // আইডি সঠিকভাবে পাওয়া গেলেই কেবল ব্যাকএন্ডে রিকোয়েস্ট যাবে
     if (targetUserId && typeof targetUserId === 'string') {
-        startupArray = await getRecruiterCompany(targetUserId.trim()) || [];
+        startupArray = await getFounderStartup(targetUserId.trim()) || [];
     } else {
         console.log("⚠️ Not found any valid startup founder ID!");
     }

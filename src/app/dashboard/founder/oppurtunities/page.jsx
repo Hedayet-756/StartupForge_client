@@ -3,30 +3,29 @@ import { getCompanyJobs } from '@/lib/api/jobs';
 import React from 'react';
 // 🎯 আইকন লাইব্রেরিতে প্রয়োজনীয় আইকনগুলো যুক্ত করা হয়েছে
 import { Briefcase, Calendar, Pin, ArrowUpRight, Globe, Eye, Pencil, TrashBin, CheckList } from '@gravity-ui/icons';
-import { getloggedInRecruiterCompany } from '@/lib/api/companies';
-
+import { getloggedInFounderStartup } from '@/lib/api/founders';
 // Next.js-এর সার্ভার সাইড ক্যাশ বন্ধ রাখার জন্য
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const FounderOpportunities = async () => {
-    const companyData = await getloggedInRecruiterCompany();
-    const company = (Array.isArray(companyData) && companyData.length > 0) ? companyData[0] : companyData;
-    const companyId = company?._id || company?.id;
+    const companyData = await getloggedInFounderStartup();
+    const startup = (Array.isArray(companyData) && companyData.length > 0) ? companyData[0] : companyData;
+    const startupId = startup?._id || startup?.id;
 
-    let jobs = [];
-    if (companyId) {
+    let opportunities = [];
+    if (startupId) {
         try {
-            const rawJobs = await getCompanyJobs(companyId);
-            jobs = Array.isArray(rawJobs) ? rawJobs : [];
+            const rawJobs = await getCompanyJobs(startupId);
+            opportunities = Array.isArray(rawJobs) ? rawJobs : [];
         } catch (error) {
             console.error("Fetch error:", error);
         }
     }
 
     console.log("=========================================");
-    console.log("🏢 [RecruiterJobs] Current Company ID:", companyId);
-    console.log("📦 [RecruiterJobs] Real-time Opportunities Found:", jobs.length);
+    console.log("🏢 [RecruiterJobs] Current Company ID:", startupId);
+    console.log("📦 [RecruiterJobs] Real-time Opportunities Found:", opportunities.length);
     console.log("=========================================");
 
     return (
@@ -41,7 +40,7 @@ const FounderOpportunities = async () => {
                             Manage Opportunities
                         </h1>
                         <p className="text-sm text-zinc-500 mt-1">
-                            Review and manage all the opportunities posted by: <span className="text-indigo-400 font-semibold">{company?.companyName || company?.name || 'test company2'}</span>
+                            Review and manage all the opportunities posted by: <span className="text-indigo-400 font-semibold">{startup?.startupName || startup?.name || 'test company2'}</span>
                         </p>
                     </div>
                     <div className="bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl text-xs font-medium text-zinc-400 self-start sm:self-center">
@@ -50,7 +49,7 @@ const FounderOpportunities = async () => {
                 </div>
 
                 {/* টেবিল সেকশন */}
-                {jobs.length === 0 ? (
+                {opportunities.length === 0 ? (
                     <div className="border border-dashed border-zinc-800 rounded-2xl p-16 text-center flex flex-col items-center justify-center gap-3">
                         <Briefcase className="text-zinc-600 size-10" />
                         <h3 className="text-base font-semibold text-zinc-300">No opportunities posted yet</h3>
@@ -71,23 +70,23 @@ const FounderOpportunities = async () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-zinc-800/60 text-sm text-zinc-300">
-                                    {jobs.map((job) => (
-                                        <tr key={job._id || job.id} className="hover:bg-zinc-900/30 transition-colors">
+                                    {opportunities.map((opportunity) => (
+                                        <tr key={opportunity._id || opportunity.id} className="hover:bg-zinc-900/30 transition-colors">
 
                                             {/* Role Title */}
                                             <td className="py-4 px-6">
                                                 <div className="font-semibold text-zinc-100">
-                                                    {job.roleTitle || job.title || "Software Engineer"}
+                                                    {opportunity.roleTitle || opportunity.title || "Software Engineer"}
                                                 </div>
                                                 <div className="text-xs text-zinc-500 mt-0.5 capitalize">
-                                                    {job.category || "Engineering"}
+                                                    {opportunity.category || "Engineering"}
                                                 </div>
                                             </td>
 
                                             {/* Required Skills */}
                                             <td className="py-4 px-6">
                                                 <div className="flex flex-wrap gap-1 max-w-xs">
-                                                    {(job.requiredSkills || job.skills || ["React", "Node.js"]).map((skill, idx) => (
+                                                    {(opportunity.requiredSkills || opportunity.skills || ["React", "Node.js"]).map((skill, idx) => (
                                                         <span key={idx} className="bg-zinc-900 border border-zinc-800 text-zinc-300 px-2 py-0.5 rounded-md text-xs">
                                                             {typeof skill === 'string' ? skill : skill.name}
                                                         </span>
@@ -99,14 +98,14 @@ const FounderOpportunities = async () => {
                                             <td className="py-4 px-6">
                                                 <span className="inline-flex items-center gap-1.5 text-zinc-300 capitalize bg-zinc-900/80 px-2.5 py-1 rounded-lg border border-zinc-800 text-xs">
                                                     <Globe className="size-3.5 text-indigo-400" />
-                                                    {job.workType || job.locationType || "Remote"}
+                                                    {opportunity.workType || opportunity.locationType || "Remote"}
                                                 </span>
                                             </td>
 
                                             {/* Commitment Level */}
                                             <td className="py-4 px-6">
                                                 <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium uppercase tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                                                    {job.commitmentLevel || job.type || "Full-time"}
+                                                    {opportunity.commitmentLevel || opportunity.type || "Full-time"}
                                                 </span>
                                             </td>
 
@@ -114,7 +113,7 @@ const FounderOpportunities = async () => {
                                             <td className="py-4 px-6">
                                                 <div className="flex items-center gap-1.5 text-zinc-400 text-xs">
                                                     <Calendar className="size-4 text-zinc-500" />
-                                                    {job.deadline || job.applicationDeadline ? new Date(job.deadline || job.applicationDeadline).toLocaleDateString('en-US', {
+                                                    {opportunity.deadline || opportunity.applicationDeadline ? new Date(opportunity.deadline || opportunity.applicationDeadline).toLocaleDateString('en-US', {
                                                         month: 'short', day: 'numeric', year: 'numeric'
                                                     }) : 'Jul 10, 2026'}
                                                 </div>
