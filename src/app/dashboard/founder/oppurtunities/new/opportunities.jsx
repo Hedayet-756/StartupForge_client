@@ -23,7 +23,7 @@ const COMMITMENT_LEVELS = [
     { key: 'internship', label: 'Internship' },
 ];
 
-export default function PostOpportunityFrom({ company }) {
+export default function PostOpportunityFrom({ startup }) {
     const { data: session } = useSession();
     const [loading, setLoading] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
@@ -67,10 +67,10 @@ export default function PostOpportunityFrom({ company }) {
             const result = await createJob({
                 ...formData,
                 requiredSkills: skillsArray,
-                companyId: company?._id || company?.id || null,
-                companyName: company?.companyName || company?.name || 'Unknown Company',
-                companyLogo: company?.logoUrl || '',
-                isCompanyApproved: company?.isApproved || false,
+                companyId: startup?._id || startup?.id || null,
+                companyName: startup?.companyName || startup?.name || 'Unknown Company',
+                companyLogo: startup?.logoUrl || '',
+                isCompanyApproved: startup?.isApproved || false,
                 recruiterId: session?.user?.id || session?.user?._id || null,
                 status: "active",
                 createdAt: new Date().toISOString()
@@ -101,28 +101,28 @@ export default function PostOpportunityFrom({ company }) {
     return (
         <div className="w-full max-w-4xl space-y-4">
             {/* Company Approval Status */}
-            {company && (
+            {startup && (
                 <div className="flex items-center justify-between gap-4 bg-zinc-950/40 border border-zinc-900 rounded-2xl p-4 md:p-5">
                     <div className="flex items-center gap-3">
-                        {company.logoUrl && (
+                        {startup.logoUrl && (
                             <img
-                                src={company.logoUrl}
-                                alt={company.name || 'Company logo'}
+                                src={startup.logoUrl}
+                                alt={startup.name || 'Company logo'}
                                 className="w-10 h-10 rounded-lg object-cover bg-zinc-800"
                             />
                         )}
-                        <p className="text-sm font-semibold text-zinc-100">{company.name || company.companyName || 'Unknown Company'}</p>
+                        <p className="text-sm font-semibold text-zinc-100">{startup.name || startup.companyName || 'Unknown Company'}</p>
                     </div>
 
                     <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3 py-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> {company.isApproved ? 'Approved' : 'Pending Approval'}
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> {startup.isApproved ? 'Approved' : 'Pending Approval'}
                     </span>
                 </div>
             )}
 
             <div className="w-full bg-zinc-950/40 border border-zinc-900 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-md">
 
-                {company?.isApproved === false && (
+                {startup?.isApproved === false && (
                     <div className="flex flex-col items-center justify-center gap-3 text-center py-20">
                         <TriangleExclamation className="size-10 text-rose-500" />
                         <h3 className="text-lg font-semibold text-zinc-100">Company not approved yet</h3>
@@ -130,7 +130,7 @@ export default function PostOpportunityFrom({ company }) {
                     </div>
                 )}
 
-                {(company?.isApproved || !company) && (
+                {(startup?.isApproved || !startup) && (
                     <Form onSubmit={handleSubmit} validationBehavior="native" className="space-y-8">
                         <Fieldset className="space-y-6">
                             <div className="border-b border-zinc-900 pb-4">

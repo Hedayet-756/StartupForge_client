@@ -7,7 +7,7 @@ import {
     Briefcase, Pin, ArrowRight, Check, TriangleExclamation, Xmark, Gear, Person, ArrowUpFromLine, Globe, Link as LinkIcon
 } from '@gravity-ui/icons';
 import toast from 'react-hot-toast';
-import { createCompany } from '@/lib/actions/companies'; // আপনার ব্যাকএন্ড অ্যাকশন অনুযায়ী এটি অপরিবর্তিত রাখা হয়েছে, চাইলে রিনেম করতে পারেন
+import { createStartup } from '@/lib/actions/founders';
 
 const INDUSTRIES = [
     { key: 'technology', label: 'Technology & IT' },
@@ -90,17 +90,17 @@ export default function StartupProfile({ user, startup }) {
 
         const payloadData = {
             ...startupData,
-            recruiterId: user?.id || user?._id || null // ব্যাকএন্ডের রিলেশন ঠিক রাখতে ফিল্ড নাম অপরিবর্তিত রাখা হয়েছে
+            founderId: user?.id || user?._id || null // ব্যাকএন্ডের রিলেশন ঠিক রাখতে ফিল্ড নাম অপরিবর্তিত রাখা হয়েছে
         };
 
-        if (!payloadData.recruiterId) {
+        if (!payloadData.founderId) {
             toast.error("ইউজারের সেশন আইডি পাওয়া যায়নি!");
             setLoading(false);
             return;
         }
 
         try {
-            const data = await createCompany(payloadData);
+            const data = await createStartup(payloadData);
             if (data?.insertedId || data?.success) {
                 toast.success(hasStartup ? "Startup profile updated!" : "Startup workspace created successfully!");
                 setHasStartup(true);
