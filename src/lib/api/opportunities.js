@@ -6,7 +6,11 @@ export const getOpportunities = async () => {
     return serverFetch(`/api/opportunities`);
 };
 
-export const getFounderOpportunities = async (founderId, status = 'active') => {
-    const res = await fetch(`${baseUrl}/api/opportunities?founderId=${founderId}&status=${status}`);
+export const getOpportunityById = async (opportunityId) => {
+    return serverFetch(`/api/opportunities/${opportunityId}`);
+};
+
+export const getStartupOpportunities = async (startupId, status = 'active') => {
+    const res = await fetch(`${baseUrl}/api/opportunities?founderId=${startupId}&status=${status}`);
     return res.json();
 };

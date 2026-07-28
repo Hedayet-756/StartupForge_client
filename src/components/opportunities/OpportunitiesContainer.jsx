@@ -14,7 +14,7 @@ export default function OpportunitiesContainer({ opportunities, filters, total }
     const [isRemote, setIsRemote] = useState(filters.isRemote === true || filters.isRemote === "true");
     const [page, setPage] = useState(filters.page || 1);
 
-    const categories = [...new Set(opportunities.map((job) => job.category))];
+    const categories = [...new Set(opportunities.map((opportunity) => opportunity.category))];
 
     const router = useRouter();
 

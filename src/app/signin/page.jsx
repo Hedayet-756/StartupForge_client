@@ -10,7 +10,7 @@ import {
     Surface,
     TextField,
 } from "@heroui/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import Link from "next/link";
 import { Rocket, Loader2, Eye, EyeOff } from "lucide-react";
@@ -20,6 +20,9 @@ export default function SignInPage() {
     const [errorMsg, setErrorMsg] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
+
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get('redirect') || '/';
 
     // গুগল দিয়ে সাইন-ইন করার ফাংশন[cite: 8]
     const handleGoogleSignin = async () => {
@@ -45,9 +48,9 @@ export default function SignInPage() {
         try {
             await authClient.signIn.email({
                 ...user,
-                callbackURL: "/",
+                // callbackURL: "/",
             });
-            router.push("/");
+            router.push(redirectTo);
         } catch (err) {
             setErrorMsg("Invalid email or password. Please try again.");
         }
@@ -150,7 +153,7 @@ export default function SignInPage() {
                 {/* Footer Link to Signup */}
                 <div className="text-center mt-6 text-sm text-zinc-400">
                     Don't have an account?{" "}
-                    <Link href="/signup" className="text-indigo-400 hover:underline font-medium">
+                    <Link href={`/signUp?redirect=${redirectTo}`} className="text-indigo-400 hover:underline font-medium">
                         Signup
                     </Link>
                 </div>

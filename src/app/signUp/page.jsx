@@ -9,7 +9,7 @@ import {
     Surface,
     TextField,
 } from "@heroui/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import Link from "next/link";
 import { Rocket, Upload, Loader2, Eye, EyeOff } from "lucide-react";
@@ -22,6 +22,9 @@ export default function SignUpPage() {
     const [uploading, setUploading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
+
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get('redirect') || '/';
 
     const [selectedRole, setSelectedRole] = useState("founder");
 
@@ -92,7 +95,7 @@ export default function SignUpPage() {
             await authClient.signUp.email({
                 ...user,
             });
-            router.push('/');
+            router.push(redirectTo);
         } catch (err) {
             setErrorMsg("Registration failed. Please try again.");
         }
@@ -236,7 +239,7 @@ export default function SignUpPage() {
 
                 <div className="text-center mt-6 text-sm text-zinc-400">
                     Already have an account?{" "}
-                    <Link href="/signin" className="text-indigo-400 hover:underline font-medium">
+                    <Link href={`/signin?redirect=${redirectTo}`} className="text-indigo-400 hover:underline font-medium">
                         Login
                     </Link>
                 </div>

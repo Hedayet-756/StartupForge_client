@@ -3,7 +3,8 @@ import React from 'react';
 // 🎯 আইকন লাইব্রেরিতে প্রয়োজনীয় আইকনগুলো যুক্ত করা হয়েছে
 import { Briefcase, Calendar, Pin, ArrowUpRight, Globe, Eye, Pencil, TrashBin, CheckList } from '@gravity-ui/icons';
 import { getloggedInFounderStartup } from '@/lib/api/founders';
-import { getFounderOpportunities } from '@/lib/api/opportunities';
+import { getStartupOpportunities } from '@/lib/api/opportunities';
+
 // Next.js-এর সার্ভার সাইড ক্যাশ বন্ধ রাখার জন্য
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -16,7 +17,7 @@ const FounderOpportunities = async () => {
     let opportunities = [];
     if (startupId) {
         try {
-            const rawJobs = await getFounderOpportunities(startupId);
+            const rawJobs = await getStartupOpportunities(startupId);
             opportunities = Array.isArray(rawJobs) ? rawJobs : [];
         } catch (error) {
             console.error("Fetch error:", error);

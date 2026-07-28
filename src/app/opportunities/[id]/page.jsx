@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { Button } from "@heroui/react";
 import { Briefcase, MapPin, CircleDollar, Calendar, Envelope, ArrowRight } from "@gravity-ui/icons";
 import { motion } from "motion/react";
-import { getJobById } from '@/lib/api/jobs';
 import Image from 'next/image';
 import { Fraunces } from 'next/font/google';
 import Link from 'next/link';
+import { getOpportunityById } from '@/lib/api/opportunities';
 
 const fraunces = Fraunces({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-fraunces' });
 
@@ -45,19 +45,19 @@ function NotFoundState() {
 }
 
 export default function OpportunityDetailsPage({ params }) {
-    const [job, setJob] = useState(null);
+    const [opportunity, setOpportunity] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         let active = true;
         async function fetchJob() {
             const resolvedParams = await params;
-            const jobId = resolvedParams.id;
-            const data = await getJobById(jobId);
+            const opportunityId = resolvedParams.id;
+            const data = await getOpportunityById(opportunityId);
             // 🎯 ফিক্স: ব্যাকএন্ড থেকে job একটা array হিসেবে আসে, তাই প্রথম আইটেমটা নিতে হবে
-            const jobData = Array.isArray(data) ? data[0] : data;
+            const opportunityData = Array.isArray(data) ? data[0] : data;
             if (active) {
-                setJob(jobData);
+                setOpportunity(opportunityData);
                 setLoading(false);
             }
         }
@@ -66,11 +66,11 @@ export default function OpportunityDetailsPage({ params }) {
     }, [params]);
 
     if (loading) return <LoadingState />;
-    if (!job) return <NotFoundState />;
+    if (!opportunity) return <NotFoundState />;
 
-    const cleanEmail = (job.hrEmail || '').replace(/[\[\]]/g, '');
-    const postedDate = job.createdAt
-        ? new Date(job.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    const cleanEmail = (opportunity.hrEmail || '').replace(/[\[\]]/g, '');
+    const postedDate = opportunity.createdAt
+        ? new Date(opportunity.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
         : null;
 
     return (
@@ -100,13 +100,13 @@ export default function OpportunityDetailsPage({ params }) {
                     </p>
 
                     <div className="flex items-start gap-5 pr-20 sm:pr-0">
-                        {job.companyLogo && (
+                        {opportunity.companyLogo && (
                             <div className="w-16 h-16 rounded-xl bg-[#F5F1E8] p-2.5 flex items-center justify-center flex-shrink-0">
                                 <Image
-                                    alt={job.companyName}
+                                    alt={opportunity.companyName}
                                     height={48}
                                     width={48}
-                                    src={job.companyLogo}
+                                    src={opportunity.companyLogo}
                                     className="object-contain w-full h-full"
                                 />
                             </div>
@@ -116,16 +116,16 @@ export default function OpportunityDetailsPage({ params }) {
                                 className="text-3xl sm:text-4xl text-[#F5F1E8] leading-[1.1]"
                                 style={{ fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 500 }}
                             >
-                                {job.title}
+                                {opportunity.title}
                             </h1>
-                            <p className="text-base text-[#A1A1AA] mt-1.5">{job.companyName}</p>
+                            <p className="text-base text-[#A1A1AA] mt-1.5">{opportunity.companyName}</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Ledger facts */}
                 <div className="border-x border-[#27272E] bg-[#0E0E11]">
-                    {FACTS(job).map((item, idx) => (
+                    {FACTS(opportunity).map((item, idx) => (
                         <div
                             key={idx}
                             className="flex items-center gap-4 px-6 sm:px-10 py-4 border-b border-[#1C1C21] last:border-b-0"
@@ -145,13 +145,13 @@ export default function OpportunityDetailsPage({ params }) {
                         >
                             §1 — About the role
                         </h2>
-                        <p className="text-[#C9C9D1] text-base leading-relaxed">{job.description}</p>
+                        <p className="text-[#C9C9D1] text-base leading-relaxed">{opportunity.description}</p>
                     </section>
                     <section>
                         <h2 className="text-xs font-mono tracking-[0.2em] uppercase text-[#D4A84B] mb-4">
                             §2 — What's required
                         </h2>
-                        <p className="text-[#C9C9D1] text-base leading-relaxed">{job.requirements}</p>
+                        <p className="text-[#C9C9D1] text-base leading-relaxed">{opportunity.requirements}</p>
                     </section>
                 </div>
 
@@ -162,7 +162,7 @@ export default function OpportunityDetailsPage({ params }) {
                         <span className="font-mono break-all">{cleanEmail}</span>
                     </div>
                     <Link
-                        href={`/jobs/${job._id}/apply`}
+                        href={`/jobs/${opportunity._id}/apply`}
                         className="w-full sm:w-auto bg-[#D4A84B] hover:bg-[#C49A3F] text-[#0B0B0F] font-semibold rounded-full px-8 h-12 text-sm flex items-center justify-center gap-2 transition-colors"
                     >
                         Apply for this role <ArrowRight className="size-4" />
