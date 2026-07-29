@@ -1,7 +1,7 @@
 "use client"; // এটি আবশ্যিক
-import { cancelApplication } from '@/lib/actions/application';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { cancelApplication } from '@/lib/actions/applications';
 
 export default function CancelButton({ applicationId }) {
     const router = useRouter();

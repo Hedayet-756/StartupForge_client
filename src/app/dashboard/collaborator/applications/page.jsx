@@ -1,5 +1,4 @@
 
-import { getApplicationsByApplicant } from "@/lib/api/application";
 import { getUserSession } from "@/lib/core/session";
 import {
     CircleCheckFill,
@@ -9,6 +8,7 @@ import {
 import Link from "next/link";
 import { formatDistanceToNow } from 'date-fns';
 import CancelButton from "@/components/Cancel";
+import { getApplicationsByApplicant } from "@/lib/api/applications";
 
 const ApplicationsPage = async () => {
     const user = await getUserSession();
