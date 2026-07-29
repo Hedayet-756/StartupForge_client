@@ -1,8 +1,8 @@
 
 import { redirect } from 'next/navigation'
 import { CircleCheck } from '@gravity-ui/icons'
-import { createSubscription } from '@/lib/actions/subscription'
 import { stripe } from '@/lib/stripe'
+import { createSubscription } from '@/lib/actions/subscriptions'
 
 
 export default async function Success({ searchParams }) {

@@ -32,6 +32,7 @@ export default function StartupProfile({ user, startup }) {
         website: '',
         description: '',
         isApproved: false,
+        isRemote: false,
     });
 
     const handleInputChange = (field, value) => {
@@ -98,11 +99,12 @@ export default function StartupProfile({ user, startup }) {
             setLoading(false);
             return;
         }
+        console.log("PAYLOAD DATA:", payloadData);
 
         try {
             const data = await createStartup(payloadData);
             if (data?.insertedId || data?.success) {
-                toast.success(hasStartup ? "Startup profile updated!" : "Startup workspace created successfully!");
+                console.log("DATA:", data);
                 setHasStartup(true);
                 setIsEditing(false);
             } else {
@@ -118,7 +120,7 @@ export default function StartupProfile({ user, startup }) {
     const handleCancel = () => {
         setIsEditing(false);
         if (!hasStartup) {
-            setStartupData({ name: '', logoUrl: '', industry: '', location: '', employeeCount: '', website: '', description: '', isApproved: false });
+            setStartupData({ name: '', logoUrl: '', industry: '', location: '', employeeCount: '', website: '', description: '', isApproved: false, isRemote: false });
         }
     };
 
@@ -246,8 +248,13 @@ export default function StartupProfile({ user, startup }) {
                                         <input type="file" accept="image/*" disabled={uploadingImage} className="hidden" onChange={handleLogoChange} />
                                     </label>
                                 ) : (
-                                    <TextField name="logoUrlField" type="url" value={startupData.logoUrl} onChange={(val) => handleInputChange('logoUrl', val)}>
-                                        <Input placeholder="Paste direct image URL" startContent={<LinkIcon className="text-zinc-600 size-5" />} className={inputClassNames} />
+                                    <TextField name="logoUrlField" type="url" value={startupData.logoUrl} onChange={(val) => handleInputChange('logoUrl', val)} className="flex flex-col gap-2">
+                                        <div className="relative flex items-center">
+                                            <span className="absolute left-3.5 text-zinc-600 pointer-events-none">
+                                                <LinkIcon className="size-5" />
+                                            </span>
+                                            <Input placeholder="Paste direct image URL" className={`${inputClassNames} pl-11`} />
+                                        </div>
                                     </TextField>
                                 )}
                             </div>
@@ -269,7 +276,15 @@ export default function StartupProfile({ user, startup }) {
                                     name="industry"
                                     placeholder="Select industry"
                                     selectedKeys={startupData.industry ? [startupData.industry] : []}
-                                    onSelectionChange={(keys) => handleInputChange('industry', Array.from(keys)[0])}
+                                    onSelectionChange={(keys) => {
+                                        // keys সবসময় Set আসে না — মাঝেমধ্যে সরাসরি string/key হিসেবেও আসে।
+                                        // string হলে Array.from() সেটাকে ক্যারেক্টারে ভেঙে ফেলে (যেমন "management" → "m"),
+                                        // তাই আগে চেক করে নিচ্ছি এটা আসলে iterable Set কিনা।
+                                        const selected = (keys && typeof keys[Symbol.iterator] === 'function' && typeof keys !== 'string')
+                                            ? (Array.from(keys)[0] ?? "")
+                                            : (keys ?? "");
+                                        handleInputChange("industry", selected);
+                                    }}
                                     className="flex flex-col gap-2"
                                 >
                                     <Label className={labelClassNames}>Industry Category</Label>
@@ -281,9 +296,40 @@ export default function StartupProfile({ user, startup }) {
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
-                                <TextField isRequired name="location" value={startupData.location} onChange={(val) => handleInputChange('location', val)} className="flex flex-col gap-2">
-                                    <Label className={labelClassNames}>Headquarters location</Label>
-                                    <Input placeholder="e.g. Dhaka, Bangladesh" startContent={<Pin className="text-zinc-600 size-5" />} className={inputClassNames} />
+                                <TextField
+                                    isRequired={!startupData.isRemote}
+                                    isDisabled={startupData.isRemote}
+                                    name="location"
+                                    value={startupData.location}
+                                    onChange={(val) => handleInputChange('location', val)}
+                                    className="flex flex-col gap-2"
+                                >
+                                    <div className="flex items-center justify-between gap-3">
+                                        <Label className={labelClassNames}>Headquarters location</Label>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const nextIsRemote = !startupData.isRemote;
+                                                setStartupData(prev => ({
+                                                    ...prev,
+                                                    isRemote: nextIsRemote,
+                                                    // Remote সিলেক্ট করলে location খালি করে দেওয়া হচ্ছে, যাতে দুটো একসাথে সেট না থাকে
+                                                    location: nextIsRemote ? '' : prev.location
+                                                }));
+                                            }}
+                                            className="flex items-center gap-1.5 shrink-0"
+                                        >
+                                            <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-all ${startupData.isRemote ? 'border-indigo-500' : 'border-zinc-600'}`}>
+                                                {startupData.isRemote && <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />}
+                                            </span>
+                                            <span className={`text-xs font-medium transition-colors ${startupData.isRemote ? 'text-indigo-400' : 'text-zinc-500'}`}>Remote</span>
+                                        </button>
+                                    </div>
+                                    <Input
+                                        placeholder={startupData.isRemote ? "Remote (no fixed office)" : "e.g. Dhaka, Bangladesh"}
+                                        startcontent={<Pin className="text-zinc-600 size-5" />}
+                                        className={`${inputClassNames} ${startupData.isRemote ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    />
                                     <FieldError className="text-xs text-red-400" />
                                 </TextField>
 
@@ -296,7 +342,7 @@ export default function StartupProfile({ user, startup }) {
 
                             <TextField name="website" type="url" value={startupData.website} onChange={(val) => handleInputChange('website', val)} className="flex flex-col gap-2">
                                 <Label className={labelClassNames}>Startup Website URL (Optional)</Label>
-                                <Input placeholder="e.g. https://www.acmestartup.com" startContent={<Globe className="text-zinc-600 size-5" />} className={inputClassNames} />
+                                <Input placeholder="e.g. https://www.acmestartup.com" startcontent={<Globe className="text-zinc-600 size-5" />} className={inputClassNames} />
                                 <FieldError className="text-xs text-red-400" />
                             </TextField>
 

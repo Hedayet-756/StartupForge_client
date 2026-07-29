@@ -17,11 +17,14 @@ const StartupPage = async () => {
     } else {
         console.log("⚠️ Not found any valid startup founder ID!");
     }
-
     // অ্যারে থেকে প্রথম স্টার্টআপের অবজেক্ট আলাদা করা হচ্ছে
     const singleStartupData = (Array.isArray(startupArray) && startupArray.length > 0)
         ? startupArray[0]
         : null;
+    // console.log("SESSION DATA:", sessionData);
+    // console.log("TARGET USER ID:", targetUserId);
+    // console.log("STARTUP ARRAY:", startupArray);
+    // console.log("SINGLE STARTUP DATA:", singleStartupData);
 
     return (
         <div>

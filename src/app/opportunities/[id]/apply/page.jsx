@@ -2,11 +2,11 @@ import { ArrowLeft, ShieldExclamation } from '@gravity-ui/icons';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import React from 'react';
-import { getPlanById } from '@/lib/api/plans';
 import { getUserSession } from '@/lib/core/session';
 import { getOpportunityById } from '@/lib/api/opportunities';
 import ApplyOpportunities from './ApplyOpportunities';
 import { getApplicationsByApplicant } from '@/lib/api/applications';
+import { getPlanById } from '@/lib/api/plans';
 
 const ApplyPage = async ({ params }) => {
     const { id } = await params;
