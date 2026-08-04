@@ -29,6 +29,8 @@ export default function SignUpPage() {
     // ডিফল্টভাবে collaborator সিলেক্ট করা থাকবে
     const [selectedRole, setSelectedRole] = useState("collaborator");
 
+    console.log('authClient:', authClient); // লগ আউট করুন authClient অবজেক্টটি পরীক্ষা করতে
+
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -40,7 +42,7 @@ export default function SignUpPage() {
         formData.append("image", file);
 
         try {
-            const apiKey = "89381f08180d7147fc2d874fccf8eabb";
+            const apiKey = "89381f08180d7147fc2d874fccf8eabb"; // Ensure you have this key in your .env file
             const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
                 method: "POST",
                 body: formData,
@@ -77,13 +79,12 @@ export default function SignUpPage() {
     const onSubmit = async (e) => {
         e.preventDefault();
         setErrorMsg("");
+
         const formData = new FormData(e.currentTarget);
-        const user = Object.fromEntries(formData.entries());
+        const name = formData.get("name");
+        const email = formData.get("email");
+        const password = formData.get("password");
 
-        user.image = imageUrl;
-        user.role = selectedRole;
-
-        const password = user.password;
         const hasUppercase = /[A-Z]/.test(password);
         const hasLowercase = /[a-z]/.test(password);
 
@@ -96,15 +97,59 @@ export default function SignUpPage() {
         const plan = selectedRole === 'collaborator' ? 'collaborator_free' : 'founder_free';
 
         try {
-            await authClient.signUp.email({
-                ...user,
+            // কাস্টম API এর বদলে সরাসরি Better Auth ক্লায়েন্ট ব্যবহার করা
+            const { data, error } = await authClient.signUp.email({
+                email,
+                password,
+                name,
+                image: imageUrl,
+                role: selectedRole,
                 plan,
+                callbackURL: redirectTo,
             });
+
+            if (error) {
+                throw new Error(error.message || "Registration failed");
+            }
+
+            // সেশন আপডেট করে রিডাইরেক্ট করা
+            router.refresh();
             router.push(redirectTo);
         } catch (err) {
-            setErrorMsg("Registration failed. Please try again.");
+            setErrorMsg(err.message || "Registration failed. Please try again.");
         }
     };
+    // const onSubmit = async (e) => {
+    //     e.preventDefault();
+    //     setErrorMsg("");
+    //     const formData = new FormData(e.currentTarget);
+    //     const user = Object.fromEntries(formData.entries());
+
+    //     user.image = imageUrl;
+    //     user.role = selectedRole;
+
+    //     const password = user.password;
+    //     const hasUppercase = /[A-Z]/.test(password);
+    //     const hasLowercase = /[a-z]/.test(password);
+
+    //     if (password.length < 8 || !hasUppercase || !hasLowercase) {
+    //         setErrorMsg("Password must be at least 8 characters and include one uppercase and one lowercase letter.");
+    //         return;
+    //     }
+
+    //     // সিলেক্টেড রোল অনুযায়ী প্ল্যান নির্ধারণ
+    //     const plan = selectedRole === 'collaborator' ? 'collaborator_free' : 'founder_free';
+
+    //     try {
+    //         await authClient.signUp.email({
+    //             ...user,
+    //             plan,
+    //         });
+    //         router.push(redirectTo);
+    //     } catch (err) {
+    //         setErrorMsg("Registration failed. Please try again.");
+    //     }
+    // };
 
     return (
         <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-black text-white">

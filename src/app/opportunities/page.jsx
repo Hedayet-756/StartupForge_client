@@ -1,6 +1,6 @@
 import React from 'react';
-import OpportunitiesContainer from '@/components/opportunities/opportunitiesContainer';
 import { getOpportunities } from '@/lib/api/opportunities';
+import OpportunitiesContainer from '@/components/opportunities/OpportunitiesContainer';
 
 const page = async ({ searchParams }) => {
     const filters = await searchParams;
