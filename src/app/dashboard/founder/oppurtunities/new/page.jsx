@@ -1,6 +1,6 @@
 import { getloggedInFounderStartup } from '@/lib/api/founders';
 import React from 'react';
-
+import OpportunityFrom from './Opportunities';
 
 const NewOpportunitys = async () => {
 
@@ -11,7 +11,7 @@ const NewOpportunitys = async () => {
     return (
         <div>
             {/* সঠিকভাবে প্রপস পাস করা হলো */}
-            <opportunityFrom startup={startup} />
+            <OpportunityFrom startup={startup} />
         </div>
     );
 };

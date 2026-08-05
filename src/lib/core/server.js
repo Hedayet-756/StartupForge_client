@@ -50,9 +50,35 @@ export const serverMutation = async (path, data, method = 'POST') => {
     }
 }
 // handle status code
-const handleStatus = async (res) => {
 
-    const data = await res.json();
+// handle status code
+const handleStatus = async (res) => {
+    const contentType = res.headers.get("content-type");
+    let data;
+
+    if (contentType && contentType.includes("application/json")) {
+        const jsonResponse = await res.json();
+
+        // যদি ব্যাকএন্ড থেকে সরাসরি অ্যারে বা অন্য কিছু আসে, তবে সেটিকে স্ট্যান্ডার্ড অবজেক্টে রূপান্তর করা
+        if (Array.isArray(jsonResponse)) {
+            data = {
+                success: true,
+                startups: jsonResponse, // অথবা আপনার প্রয়োজন অনুযায়ী অন্য নাম দিতে পারেন
+                opportunities: jsonResponse,
+                data: jsonResponse
+            };
+        } else {
+            data = jsonResponse;
+        }
+    } else {
+        const text = await res.text();
+        console.error("Non-JSON Response received:", text);
+        return {
+            success: false,
+            status: res.status,
+            message: "Server returned non-JSON response (HTML error page)",
+        };
+    }
 
     if (res.status === 401) {
         redirect("/unauthorized");
@@ -77,3 +103,31 @@ const handleStatus = async (res) => {
 
     return data;
 };
+
+// const handleStatus = async (res) => {
+
+//     const data = await res.json();
+
+//     if (res.status === 401) {
+//         redirect("/unauthorized");
+//     }
+
+//     if (res.status === 403) {
+//         redirect("/forbidden");
+//     }
+
+//     if (!res.ok) {
+//         console.error("API Error:", {
+//             status: res.status,
+//             data,
+//         });
+
+//         return {
+//             success: false,
+//             status: res.status,
+//             ...data,
+//         };
+//     }
+
+//     return data;
+// };

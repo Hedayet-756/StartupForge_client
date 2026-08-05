@@ -8,7 +8,7 @@ import {
 } from '@gravity-ui/icons';
 import { useSession } from '@/lib/auth-client';
 import toast from 'react-hot-toast';
-import { createJob } from '@/lib/actions/jobs';
+import { createOpportunity } from '@/lib/actions/opportunities';
 
 const WORK_TYPES = [
     { key: 'remote', label: 'Remote' },
@@ -23,7 +23,7 @@ const COMMITMENT_LEVELS = [
     { key: 'internship', label: 'Internship' },
 ];
 
-export default function PostOpportunityFrom({ startup }) {
+export default function OpportunityFrom({ startup }) {
     const { data: session } = useSession();
     const [loading, setLoading] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
@@ -64,13 +64,13 @@ export default function PostOpportunityFrom({ startup }) {
             // প্রয়োজনীয় স্কিলগুলোকে কমা (comma) দিয়ে স্প্লিট করে অ্যারে বানিয়ে পাঠানো হচ্ছে
             const skillsArray = formData.requiredSkills.split(',').map(s => s.trim()).filter(Boolean);
 
-            const result = await createJob({
+            const result = await createOpportunity({
                 ...formData,
                 requiredSkills: skillsArray,
-                companyId: startup?._id || startup?.id || null,
-                companyName: startup?.companyName || startup?.name || 'Unknown Company',
-                companyLogo: startup?.logoUrl || '',
-                isCompanyApproved: startup?.isApproved || false,
+                startupId: startup?._id || startup?.id || null,
+                startupName: startup?.startupName || startup?.name || 'Unknown Startup',
+                startupLogo: startup?.logoUrl || '',
+                isStartupApproved: startup?.isApproved || false,
                 recruiterId: session?.user?.id || session?.user?._id || null,
                 status: "active",
                 createdAt: new Date().toISOString()
