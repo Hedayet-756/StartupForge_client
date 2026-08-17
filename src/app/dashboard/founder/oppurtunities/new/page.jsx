@@ -1,4 +1,4 @@
-import { getloggedInFounderStartup } from '@/lib/api/founders';
+import { getloggedInFounderStartup } from '@/lib/api/startups';
 import React from 'react';
 import OpportunityFrom from './Opportunities';
 

@@ -3,7 +3,7 @@ import { protectedFetch, serverFetch } from "../core/server";
 import { getUserSession } from "../core/session";
 
 
-export const getFounders = async () => {
+export const getStartups = async () => {
     return protectedFetch('/api/startups');
 };
 

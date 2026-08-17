@@ -5,7 +5,10 @@ import { formatDistanceToNow } from 'date-fns';
 import StartupsActions from './startupsActions';
 
 export default function StartupsTable({ startups }) {
-    console.log("companies", startups);
+    // console.log("companies", startups);
+    const startupsArray = Array.isArray(startups)
+        ? startups
+        : (startups?.startups || startups?.data || []);
     return (
         <Table aria-label="Companies list table">
             <Table.ScrollContainer>
@@ -19,7 +22,7 @@ export default function StartupsTable({ startups }) {
                         <Table.Column className={"text-center bg-default/50 text-lg font-semibold text-white"}>Actions</Table.Column>
                     </Table.Header>
                     <Table.Body>
-                        {startups.map((startup) => (
+                        {startupsArray.map((startup) => (
                             <Table.Row key={startup._id}>
                                 <Table.Cell>
                                     <div className="flex items-center gap-3">

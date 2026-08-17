@@ -1,7 +1,7 @@
 import React from 'react';
 import StartupProfile from './StartupProfile';
 import { getUserSession } from '@/lib/core/session';
-import { getFounderStartup } from '@/lib/api/founders';
+import { getFounderStartup } from '@/lib/api/startups';
 
 
 const StartupPage = async () => {

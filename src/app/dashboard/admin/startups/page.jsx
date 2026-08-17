@@ -1,9 +1,10 @@
 import StartupsTable from '@/components/startupsTable';
-import { getFounders } from '@/lib/api/founders';
+import { getStartups } from '@/lib/api/startups';
+
 import React from 'react';
 
 const AdminStartupPage = async () => {
-    const startups = await getFounders();
+    const startups = await getStartups();
     // console.log(startups);
     return (
         <div>

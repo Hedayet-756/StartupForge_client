@@ -2,7 +2,7 @@
 import React from 'react';
 // 🎯 আইকন লাইব্রেরিতে প্রয়োজনীয় আইকনগুলো যুক্ত করা হয়েছে
 import { Briefcase, Calendar, Pin, ArrowUpRight, Globe, Eye, Pencil, TrashBin, CheckList } from '@gravity-ui/icons';
-import { getloggedInFounderStartup } from '@/lib/api/founders';
+import { getloggedInFounderStartup } from '@/lib/api/startups';
 import { getStartupOpportunities } from '@/lib/api/opportunities';
 
 // Next.js-এর সার্ভার সাইড ক্যাশ বন্ধ রাখার জন্য
@@ -45,7 +45,7 @@ const FounderOpportunities = async () => {
                         </p>
                     </div>
                     <div className="bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl text-xs font-medium text-zinc-400 self-start sm:self-center">
-                        Total Opportunities: <span className="text-indigo-400 font-bold text-sm ml-1">{jobs.length}</span>
+                        Total Opportunities: <span className="text-indigo-400 font-bold text-sm ml-1">{opportunities.length}</span>
                     </div>
                 </div>
 
