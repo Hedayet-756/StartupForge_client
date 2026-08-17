@@ -35,7 +35,7 @@ const Navbar = () => {
         },
         {
             label: "Startups",
-            href: "dashboard/admin/startups",
+            href: "/dashboard/admin/startups",
         },
         {
             label: "Pricing",
@@ -46,7 +46,7 @@ const Navbar = () => {
     const dashboardLink = {
         collaborator: "/dashboard/collaborator",
         founder: "/dashboard/founder",
-        admin: "/dashboard/admin",
+        admin: "/dashboard/admin"
     };
 
     if (user?.email) {
@@ -183,8 +183,16 @@ const Navbar = () => {
                                     </div>
                                     <Dropdown.Menu
                                         onAction={(key) => {
-                                            if (key === "dashboard") router.push("/dashboard");
-                                            if (key === "profile") router.push("/dashboard/profile");
+                                            if (key === "dashboard") {
+                                                // ইউজারের রোল অনুযায়ী ডাইনামিক পাথ: /dashboard/admin, /dashboard/founder ইত্যাদি
+                                                const dashboardPath = user?.role === 'admin' ? '/dashboard/admin' :
+                                                    user?.role === 'founder' ? '/dashboard/founder' :
+                                                        '/dashboard/collaborator';
+                                                router.push(dashboardPath);
+                                            }
+                                            if (key === "profile") {
+                                                router.push("/dashboard/profile");
+                                            }
                                         }}
                                     >
                                         <Dropdown.Item id="dashboard" textValue="Dashboard">
