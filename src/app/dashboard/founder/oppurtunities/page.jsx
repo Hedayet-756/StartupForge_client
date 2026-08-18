@@ -11,8 +11,20 @@ export const revalidate = 0;
 
 const FounderOpportunities = async () => {
     const startunData = await getloggedInFounderStartup();
-    const startup = (Array.isArray(startunData) && startunData.length > 0) ? startunData[0] : startunData;
+    let startup = null;
+    if (Array.isArray(startunData)) {
+        startup = startunData[0];
+    } else if (startunData?.startups && Array.isArray(startunData.startups)) {
+        startup = startunData.startups[0];
+    } else if (startunData?.data && Array.isArray(startunData.data)) {
+        startup = startunData.data[0];
+    } else {
+        startup = startunData;
+    }
+
     const startupId = startup?._id || startup?.id;
+
+    console.log("🚀 startupId:", startupId);
 
     let opportunities = [];
     if (startupId) {
@@ -41,7 +53,7 @@ const FounderOpportunities = async () => {
                             Manage Opportunities
                         </h1>
                         <p className="text-sm text-zinc-500 mt-1">
-                            Review and manage all the opportunities posted by: <span className="text-indigo-400 font-semibold">{startup?.startupName || startup?.name || 'test company2'}</span>
+                            Review and manage all the opportunities posted by: <span className="text-indigo-400 font-semibold">{startup?.startupName || startup?.name || 'Unknown Startup'}</span>
                         </p>
                     </div>
                     <div className="bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl text-xs font-medium text-zinc-400 self-start sm:self-center">

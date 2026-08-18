@@ -43,6 +43,7 @@ export default function OpportunityFrom({ startup }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (loading) return;
         setIsSubmitted(true);
 
         if (
@@ -71,7 +72,7 @@ export default function OpportunityFrom({ startup }) {
                 startupName: startup?.startupName || startup?.name || 'Unknown Startup',
                 startupLogo: startup?.logoUrl || '',
                 isStartupApproved: startup?.isApproved || false,
-                recruiterId: session?.user?.id || session?.user?._id || null,
+                founderId: session?.user?.id || session?.user?._id || null,
                 status: "active",
                 createdAt: new Date().toISOString()
             });
@@ -280,7 +281,7 @@ export default function OpportunityFrom({ startup }) {
 
                         {/* Actions */}
                         <div className="border-t border-zinc-900 pt-10 mt-6 flex justify-end items-center gap-4">
-                            <Button type="button" onPress={() => window.history.back()} className="bg-zinc-900 hover:bg-zinc-800 text-zinc-100 font-semibold rounded-xl px-8 h-11 text-sm flex items-center gap-1.5">Cancel <Xmark className="size-4" /></Button>
+                            <Button type="button" isDisabled={loading} onPress={() => window.history.back()} className="bg-zinc-900 hover:bg-zinc-800 text-zinc-100 font-semibold rounded-xl px-8 h-11 text-sm flex items-center gap-1.5">Cancel <Xmark className="size-4" /></Button>
                             <Button type="submit" isLoading={loading} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-indigo-600/20 shadow-lg px-10 h-11 text-sm flex items-center gap-1.5">
                                 Publish Opportunity <ArrowRight className="size-4" />
                             </Button>

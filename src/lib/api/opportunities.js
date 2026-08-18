@@ -11,6 +11,6 @@ export const getOpportunityById = async (opportunityId) => {
 };
 
 export const getStartupOpportunities = async (startupId, status = 'active') => {
-    const res = await fetch(`${baseUrl}/api/opportunities?founderId=${startupId}&status=${status}`);
+    const res = await fetch(`${baseUrl}/api/opportunities?startupId=${startupId}&status=${status}`);
     return res.json();
 };

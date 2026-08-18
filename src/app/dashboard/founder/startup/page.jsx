@@ -9,18 +9,25 @@ const StartupPage = async () => {
 
     const targetUserId = sessionData?._id || sessionData?.id || null;
 
-    let startupArray = [];
+    let response = [];
 
     // আইডি সঠিকভাবে পাওয়া গেলেই কেবল ব্যাকএন্ডে রিকোয়েস্ট যাবে
     if (targetUserId && typeof targetUserId === 'string') {
-        startupArray = await getFounderStartup(targetUserId.trim()) || [];
+        response = await getFounderStartup(targetUserId.trim()) || [];
     } else {
         console.log("⚠️ Not found any valid startup founder ID!");
     }
     // অ্যারে থেকে প্রথম স্টার্টআপের অবজেক্ট আলাদা করা হচ্ছে
-    const singleStartupData = (Array.isArray(startupArray) && startupArray.length > 0)
-        ? startupArray[0]
-        : null;
+    let singleStartupData = null;
+    if (Array.isArray(response)) {
+        singleStartupData = response[0];
+    } else if (response?.startups && Array.isArray(response.startups)) {
+        singleStartupData = response.startups[0];
+    } else if (response?.data && Array.isArray(response.data)) {
+        singleStartupData = response.data[0];
+    } else if (response && typeof response === 'object') {
+        singleStartupData = response;
+    }
     // console.log("SESSION DATA:", sessionData);
     // console.log("TARGET USER ID:", targetUserId);
     // console.log("STARTUP ARRAY:", startupArray);

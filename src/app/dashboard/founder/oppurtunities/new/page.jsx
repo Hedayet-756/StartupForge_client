@@ -3,10 +3,26 @@ import React from 'react';
 import OpportunityFrom from './Opportunities';
 
 const NewOpportunitys = async () => {
+    const response = await getloggedInFounderStartup();
+    console.log("Full response from server:", response);
 
-    const startups = await getloggedInFounderStartup();
-    // 🎯 ফিক্স: serverFetch থেকে company array আসে, তাই প্রথম কোম্পানিটা নিতে হবে
-    const startup = Array.isArray(startups) ? startups[0] : startups;
+    // সঠিকভাবে অ্যারে বা অবজেক্ট থেকে প্রথম কোম্পানি বা মূল ডাটা বের করে নেওয়া
+    let startup = null;
+    if (Array.isArray(response)) {
+        startup = response[0];
+    } else if (response?.startups && Array.isArray(response.startups)) {
+        startup = response.startups[0];
+    } else if (response?.data && Array.isArray(response.data)) {
+        startup = response.data[0];
+    } else {
+        startup = response;
+    }
+
+    console.log("Processed startup object:", startup);
+
+    // const startups = await getloggedInFounderStartup();
+    // const startup = Array.isArray(startups) ? startups[0] : startups;
+    // console.log("founder startups", startup);
 
     return (
         <div>
