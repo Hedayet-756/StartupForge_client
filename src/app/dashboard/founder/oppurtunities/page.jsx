@@ -24,7 +24,7 @@ const FounderOpportunities = async () => {
 
     const startupId = startup?._id || startup?.id;
 
-    console.log("🚀 startupId:", startupId);
+    // console.log("🚀 startupId:", startupId);
 
     let opportunities = [];
     if (startupId) {
@@ -36,10 +36,10 @@ const FounderOpportunities = async () => {
         }
     }
 
-    console.log("=========================================");
-    console.log("🏢 [RecruiterJobs] Current startup ID:", startupId);
-    console.log("📦 [RecruiterJobs] Real-time Opportunities Found:", opportunities.length);
-    console.log("=========================================");
+    // console.log("=========================================");
+    // console.log("🏢 [RecruiterJobs] Current startup ID:", startupId);
+    // console.log("📦 [RecruiterJobs] Real-time Opportunities Found:", opportunities.length);
+    // console.log("=========================================");
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white p-6 md:p-12 flex justify-center">
