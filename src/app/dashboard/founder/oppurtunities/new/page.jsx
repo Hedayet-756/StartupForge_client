@@ -6,7 +6,6 @@ const NewOpportunitys = async () => {
     const response = await getloggedInFounderStartup();
     console.log("Full response from server:", response);
 
-    // সঠিকভাবে অ্যারে বা অবজেক্ট থেকে প্রথম কোম্পানি বা মূল ডাটা বের করে নেওয়া
     let startup = null;
     if (Array.isArray(response)) {
         startup = response[0];
@@ -20,13 +19,8 @@ const NewOpportunitys = async () => {
 
     console.log("Processed startup object:", startup);
 
-    // const startups = await getloggedInFounderStartup();
-    // const startup = Array.isArray(startups) ? startups[0] : startups;
-    // console.log("founder startups", startup);
-
     return (
         <div>
-            {/* সঠিকভাবে প্রপস পাস করা হলো */}
             <OpportunityFrom startup={startup} />
         </div>
     );

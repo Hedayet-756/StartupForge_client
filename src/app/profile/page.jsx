@@ -5,7 +5,7 @@ import { Button, Card, FieldError, Form, Input, Label, TextField } from '@heroui
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { LuUser, LuMail, LuImage, LuSave, LuUpload, LuLoader2 } from 'react-icons/lu';
+import { LuUser, LuMail, LuImage, LuSave, LuUpload, LuLoader } from 'react-icons/lu'; // 🎯 এখানে পরিবর্তন করা হয়েছে
 
 const ProfilePage = () => {
     const router = useRouter();
@@ -13,11 +13,9 @@ const ProfilePage = () => {
     const [uploading, setUploading] = useState(false);
     const [imageUrl, setImageUrl] = useState("");
 
-    // Better-Auth থেকে লগইন থাকা ইউজারের ডাটা নেওয়া হচ্ছে
     const { data: session, isPending } = authClient.useSession();
     const user = session?.user;
 
-    // ইউজার ডাটা লোড হলে ইমেজ স্টেটে ডিফল্ট ভ্যালু সেট করা
     React.useEffect(() => {
         if (user?.image && !imageUrl) {
             setImageUrl(user.image);
@@ -43,7 +41,6 @@ const ProfilePage = () => {
         );
     }
 
-    // পিসি থেকে ফাইল নিয়ে ImgBB তে আপলোড করার ফাংশন
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -74,7 +71,6 @@ const ProfilePage = () => {
         }
     };
 
-    // প্রোফাইল ইনফরমেশন আপডেট হ্যান্ডলার
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
         setIsUpdatingProfile(true);
@@ -108,7 +104,6 @@ const ProfilePage = () => {
         <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-black text-white">
             <div className="w-full max-w-xl bg-zinc-950 border border-zinc-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
 
-                {/* হেডার */}
                 <div className="mb-8 text-center">
                     <h2 className="text-2xl font-bold tracking-tight text-white">Account Settings</h2>
                     <p className="text-sm text-zinc-400 mt-1">Update your profile name and picture</p>
@@ -116,7 +111,6 @@ const ProfilePage = () => {
 
                 <Form onSubmit={handleUpdateProfile} className="space-y-5">
 
-                    {/* ফুল নেম ইনপুট */}
                     <TextField name="name" isRequired defaultValue={user?.name} className="space-y-1.5">
                         <Label className="text-sm font-medium text-zinc-300 flex items-center gap-2">
                             <LuUser className="text-indigo-400" /> Full Name
@@ -128,7 +122,6 @@ const ProfilePage = () => {
                         <FieldError className="text-xs text-red-500 mt-1" />
                     </TextField>
 
-                    {/* ইমেইল ইনপুট (লকড) */}
                     <TextField isDisabled defaultValue={user?.email} className="space-y-1.5 opacity-60">
                         <Label className="text-sm font-medium text-zinc-400 flex items-center gap-2">
                             <LuMail className="text-zinc-500" /> Email Address (Unchangeable)
@@ -137,37 +130,40 @@ const ProfilePage = () => {
                     </TextField>
 
                     {/* পিসি থেকে ইমেজ আপলোড ফিল্ড */}
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                         <label className="text-sm font-medium text-zinc-300 flex items-center gap-2">
                             <LuImage className="text-indigo-400" /> Profile Picture
                         </label>
-                        <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-zinc-800 border-dashed rounded-xl cursor-pointer bg-zinc-900 hover:bg-zinc-850 transition-all">
-                            <div className="flex flex-col items-center justify-center pt-4 pb-5 px-4 text-center">
-                                {uploading ? (
-                                    <>
-                                        <LuLoader2 className="w-5 h-5 text-indigo-400 animate-spin mb-1" />
-                                        <p className="text-xs text-zinc-400">Uploading to ImgBB...</p>
-                                    </>
-                                ) : imageUrl ? (
-                                    <div className="flex items-center gap-3">
-                                        <img src={imageUrl} alt="Avatar" className="w-10 h-10 rounded-full object-cover border border-zinc-700" />
-                                        <div className="text-left">
-                                            <p className="text-xs text-emerald-400 font-medium">Image Uploaded Successfully! ✅</p>
-                                            <p className="text-[10px] text-zinc-500 truncate max-w-[200px]">{imageUrl}</p>
-                                        </div>
+
+                        <div className="flex items-center gap-5 bg-zinc-900/60 border border-zinc-800 p-4 rounded-2xl backdrop-blur-md">
+                            {/* বড় প্রিভিউ ইমেজ */}
+                            <div className="relative group shrink-0">
+                                <img
+                                    src={imageUrl || "https://via.placeholder.com/150"}
+                                    alt="Profile Preview"
+                                    className="w-24 h-24 rounded-2xl object-cover border-2 border-indigo-500/40 shadow-xl"
+                                />
+                                {uploading && (
+                                    <div className="absolute inset-0 bg-black/60 rounded-2xl flex items-center justify-center">
+                                        <LuLoader className="w-6 h-6 text-indigo-400 animate-spin" />
                                     </div>
-                                ) : (
-                                    <>
-                                        <LuUpload className="w-5 h-5 text-zinc-400 mb-1" />
-                                        <p className="text-xs text-zinc-400"><span className="font-semibold text-zinc-200">Click to upload</span> new avatar</p>
-                                    </>
                                 )}
                             </div>
-                            <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                        </label>
+
+                            {/* ছোট আপলোড বক্স এবং টেক্সট */}
+                            <div className="flex-1 flex flex-col justify-center">
+                                <label className="flex items-center justify-center gap-2 w-full py-3 px-4 border border-zinc-700 border-dashed rounded-xl cursor-pointer bg-zinc-900/80 hover:bg-zinc-800 transition-all text-center">
+                                    <LuUpload className="w-4 h-4 text-indigo-400 shrink-0" />
+                                    <span className="text-xs text-zinc-200 font-medium truncate">
+                                        {uploading ? "Uploading..." : "Upload new image"}
+                                    </span>
+                                    <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                                </label>
+                                <p className="text-[10px] text-zinc-500 mt-1.5 text-center">PNG, JPG, WEBP (Max 5MB)</p>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* ব্যাকআপ হিসেবে ইমেজ ইউআরএল ফিল্ড */}
                     <TextField name="image" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="space-y-1.5">
                         <Label className="text-sm font-medium text-zinc-300">Or Image URL</Label>
                         <Input
@@ -177,7 +173,6 @@ const ProfilePage = () => {
                         <FieldError className="text-xs text-red-500 mt-1" />
                     </TextField>
 
-                    {/* প্রোফাইল সেভ বাটন */}
                     <div className="pt-2">
                         <Button
                             type="submit"

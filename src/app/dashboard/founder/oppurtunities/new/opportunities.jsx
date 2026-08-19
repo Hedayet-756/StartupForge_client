@@ -1,10 +1,10 @@
 'use client';
 import React, { useState } from 'react';
 import {
-    Form, Fieldset, TextField, Label, Input, TextArea, Select, ListBox, Button, FieldError, Checkbox
+    Form, Fieldset, TextField, Label, Input, TextArea, Select, ListBox, Button, FieldError
 } from '@heroui/react';
 import {
-    Briefcase, CircleDollar, Pin, Calendar, ArrowRight, Envelope, TriangleExclamation, Xmark, Globe
+    Briefcase, CircleDollar, Pin, Calendar, ArrowRight, TriangleExclamation, Xmark
 } from '@gravity-ui/icons';
 import { useSession } from '@/lib/auth-client';
 import toast from 'react-hot-toast';
@@ -90,13 +90,14 @@ export default function OpportunityFrom({ startup }) {
 
             const result = await createOpportunity({
                 ...formData,
+                requiredSkills: skillsArray,
                 location: isRemote ? 'Remote' : formData.location,
                 startupId: startup?._id || startup?.id || null,
                 startupName: startup?.startupName || startup?.name || 'Unknown Startup',
                 startupLogo: startup?.logoUrl || '',
                 isStartupApproved: startup?.isApproved || false,
                 founderId: session?.user?.id || session?.user?._id || null,
-                hrEmail: session?.user?.email || '', // 🎯 অটোমেটিক ইউজার ইমেইল
+                hrEmail: session?.user?.email || '',
                 status: "active",
                 createdAt: new Date().toISOString()
             });
@@ -172,7 +173,7 @@ export default function OpportunityFrom({ startup }) {
                             </div>
 
                             <Fieldset.Group className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* 🎯 Role Title & Category একসাথে দুই কলামে */}
+                                {/* Role Title */}
                                 <TextField
                                     isRequired
                                     isInvalid={isSubmitted && !formData.roleTitle}
@@ -190,6 +191,7 @@ export default function OpportunityFrom({ startup }) {
                                     <FieldError className="text-xs text-rose-500">Role title is required</FieldError>
                                 </TextField>
 
+                                {/* Category */}
                                 <Select
                                     isRequired
                                     isInvalid={isSubmitted && !formData.category}
@@ -215,7 +217,7 @@ export default function OpportunityFrom({ startup }) {
                                     </Select.Popover>
                                 </Select>
 
-                                {/* Required Skills */}
+                                {/* Required Skills Input */}
                                 <TextField
                                     isRequired
                                     isInvalid={isSubmitted && !formData.requiredSkills}
@@ -225,13 +227,13 @@ export default function OpportunityFrom({ startup }) {
                                     <Input
                                         value={formData.requiredSkills}
                                         onChange={(e) => handleInputChange('requiredSkills', e.target.value)}
-                                        placeholder="e.g. React, Node.js, TypeScript, MongoDB"
+                                        placeholder="e.g. React, Node.js, TypeScript"
                                         className="bg-zinc-900 border-zinc-800 text-zinc-100 rounded-xl"
                                     />
                                     <FieldError className="text-xs text-rose-500">Required skills are required</FieldError>
                                 </TextField>
 
-                                {/* 🎯 Location Field & Remote Toggle */}
+                                {/* Location Field & Remote Toggle */}
                                 <div className="flex flex-col gap-2.5">
                                     <div className="flex items-center justify-between">
                                         <Label className="text-sm text-zinc-400 font-semibold flex items-center gap-1.5">
@@ -259,7 +261,7 @@ export default function OpportunityFrom({ startup }) {
                                     )}
                                 </div>
 
-                                {/* Type Select (Formerly Commitment Level) */}
+                                {/* Type Select */}
                                 <Select
                                     isRequired
                                     isInvalid={isSubmitted && !formData.type}
@@ -303,7 +305,7 @@ export default function OpportunityFrom({ startup }) {
                                     <FieldError className="text-xs text-rose-500">Deadline date is required</FieldError>
                                 </TextField>
 
-                                {/* Minimum Pay & Maximum Pay (কারেন্সিসহ) */}
+                                {/* Minimum Pay & Maximum Pay */}
                                 <div className="flex flex-col gap-2.5">
                                     <Label className="text-sm text-zinc-400 font-semibold flex items-center gap-1.5">
                                         <CircleDollar className="size-4 text-zinc-500" /> Compensation Range & Currency
@@ -386,7 +388,6 @@ export default function OpportunityFrom({ startup }) {
         </div>
     );
 }
-
 
 // 'use client';
 // import React, { useState } from 'react';

@@ -13,7 +13,6 @@ export async function DashboardSidebar() {
         { icon: OfficeBadge, href: "/dashboard/admin/startups", label: "Startups" },
         { icon: File, href: "/dashboard/admin/applications", label: "Applications" },
         { icon: CreditCard, href: "/dashboard/admin/payments", label: "Payments" },
-        { icon: Gear, href: "/dashboard/admin/settings", label: "Settings" },
     ];
 
     const founderNavItems = [
@@ -21,19 +20,16 @@ export async function DashboardSidebar() {
         { icon: Magnifier, href: "/dashboard/founder/oppurtunities", label: "Opportunities" },
         { icon: Bell, href: "/dashboard/founder/oppurtunities/new", label: "Create A Job" },
         { icon: Briefcase, href: "/dashboard/founder/startup", label: "Startup Profile" },
-        { icon: Envelope, href: "/dashboard/founder/messages", label: "Messages" },
-        { icon: Person, href: "/dashboard/founder/profile", label: "Profile" },
-        { icon: Gear, href: "/dashboard/founder/settings", label: "Settings" },
+        { icon: Person, href: "/profile", label: "Profile" },
     ];
 
     const collaboratorNavItems = [
         { icon: House, href: "/dashboard/collaborator", label: "Dashboard" },
         { icon: Magnifier, href: "/dashboard/collaborator/opportunities", label: "Opportunities" },
-        { icon: Bookmark, href: "/dashboard/collaborator/saved-opportunities", label: "Saved Opportunities" },
+        // { icon: Bookmark, href: "/dashboard/collaborator/saved-opportunities", label: "Saved Opportunities" },
         { icon: File, href: "/dashboard/collaborator/applications", label: "Applications" },
         { icon: CreditCard, href: "/dashboard/collaborator/billing", label: "Billing" },
         { icon: Person, href: "/dashboard/collaborator/profile", label: "Profile" },
-        { icon: Gear, href: "/dashboard/collaborator/settings", label: "Settings" },
     ];
 
     const navItemsMap = {

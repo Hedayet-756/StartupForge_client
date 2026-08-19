@@ -191,7 +191,7 @@ const Navbar = () => {
                                                 router.push(dashboardPath);
                                             }
                                             if (key === "profile") {
-                                                router.push("/dashboard/profile");
+                                                router.push("/profile");
                                             }
                                         }}
                                     >
